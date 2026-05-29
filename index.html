@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Orange Days - Calendari e Risultati</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="hero">
+      <div>
+        <p class="eyebrow">Orange Days</p>
+      </div>
+      <div class="status" id="lastUpdate">Caricamento...</div>
+    </header>
+
+    <nav class="tabs" id="tournamentTabs" aria-label="Tornei"></nav>
+
+    <main id="content" class="content">
+      <section class="card loading">Caricamento dati...</section>
+    </main>
+
+    <footer class="footer">
+      Dati aggiornati automaticamente onni 60s. Se non vedi gli ultimi risultati, ricarica la pagina.
+    </footer>
+  </div>
+
+  <script src="config.js"></script>
+  <script type="module" src="script.js"></script>
+</body>
+</html>
