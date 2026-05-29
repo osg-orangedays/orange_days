@@ -539,10 +539,10 @@ function ensureTeam(table, girone = 'A', squadra = '') {
       V: 0,
       N: 0,
       P: 0,
-      PF: 0,
-      PS: 0,
+      F: 0,
+      S: 0,
       Diff: 0,
-      Pt: 0
+      Pti: 0
     });
   }
 
@@ -822,10 +822,10 @@ function renderStandingsCard(rows, tournament) {
                   <td>${row.V}</td>
                   <td>${row.N}</td>
                   <td>${row.P}</td>
-                  <td>${row.PF}</td>
-                  <td>${row.PS}</td>
+                  <td>${row.F}</td>
+                  <td>${row.S}</td>
                   <td>${row.Diff}</td>
-                  <td class="score">${row.Pt}</td>
+                  <td class="score">${row.Pti}</td>
                 </tr>
               `).join('')}
             </tbody>
