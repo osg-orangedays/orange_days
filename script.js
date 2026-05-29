@@ -719,12 +719,12 @@ function render() {
 
     ${phase.type === 'groups'
       ? `
-        <section class="grid">
+        <section class="stack">
           ${renderStandingsCard(calculateStandings(rows, tournament), tournament)}
-          ${renderScheduleCard(rows, 'Calendario gironi')}
+          ${renderScheduleCard(rows, 'Calendario gironi', tournament)}
         </section>
       `
-      : renderScheduleCard(rows, phase.name)
+      : renderScheduleCard(rows, phase.name, tournament)
     }
   `;
 
@@ -836,14 +836,13 @@ function renderStandingsCard(rows, tournament) {
   `;
 }
 
-/*
-  Disegna calendario e risultati.
-  Usato sia per gironi sia per finali.
-*/
-function renderScheduleCard(rows, title = 'Calendario e risultati') {
+function renderScheduleCard(rows, title = 'Calendario e risultati', tournament = null) {
   if (!rows.length) {
     return `<section class="card empty">Nessuna partita inserita per ${escapeHtml(title.toLowerCase())}.</section>`;
   }
+
+  const sport = String(tournament?.sport || '').toLowerCase();
+  const showReferee = !sport.includes('calcio');
 
   const sorted = [...rows].sort(compareMatches);
   const groups = groupBy(sorted, row => row.data || 'Data da definire');
@@ -866,7 +865,7 @@ function renderScheduleCard(rows, title = 'Calendario e risultati') {
                 <th>Fase/Girone</th>
                 <th>Partita</th>
                 <th>Risultato</th>
-                <th>Arbitro</th>
+                ${showReferee ? '<th>Arbitro</th>' : ''}
                 <th>Stato</th>
               </tr>
             </thead>
@@ -887,7 +886,7 @@ function renderScheduleCard(rows, title = 'Calendario e risultati') {
                       ? `${escapeHtml(row.score_1)} - ${escapeHtml(row.score_2)}`
                       : '-'}
                   </td>
-                  <td>${escapeHtml(row.arbitro || '')}</td>
+                  ${showReferee ? `<td>${escapeHtml(row.arbitro || '')}</td>` : ''}
                   <td>${statusBadge(row.stato)}</td>
                 </tr>
               `).join('')}

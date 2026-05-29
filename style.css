@@ -50,6 +50,11 @@ h1 { margin: 0; font-size: clamp(32px, 6vw, 64px); line-height: .95; letter-spac
 .tab.active { background: var(--ink); color: white; border-color: var(--ink); }
 .content { display: grid; gap: 18px; }
 .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; align-items: start; }
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
 .card {
   background: var(--card);
   border: 1px solid var(--line);
