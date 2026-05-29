@@ -775,9 +775,6 @@ function isPlaceholderTeam(name) {
   );
 }
 
-/*
-  Disegna la card delle classifiche.
-*/
 function renderStandingsCard(rows, tournament) {
   if (!rows.length) {
     return '<section class="card empty">Nessuna squadra inserita.</section>';
@@ -785,12 +782,12 @@ function renderStandingsCard(rows, tournament) {
 
   const points = getTournamentPoints(tournament);
   const groups = groupBy(rows, row => row.girone || 'A');
+  const columns = getStandingsColumns(tournament);
 
   return `
     <section class="card">
       <div class="card-header">
         <h2>Classifiche</h2>
-        <p>Vittoria: ${points.win} pt · Pareggio: ${points.draw} pt · Sconfitta: ${points.loss} pt</p>
       </div>
 
       ${Object.entries(groups).map(([groupName, items]) => `
@@ -802,14 +799,7 @@ function renderStandingsCard(rows, tournament) {
               <tr>
                 <th>#</th>
                 <th>Squadra</th>
-                <th>G</th>
-                <th>V</th>
-                <th>N</th>
-                <th>P</th>
-                <th>PF</th>
-                <th>PS</th>
-                <th>Diff</th>
-                <th>Pt</th>
+                ${columns.map(column => `<th>${escapeHtml(column.label)}</th>`).join('')}
               </tr>
             </thead>
 
@@ -818,14 +808,12 @@ function renderStandingsCard(rows, tournament) {
                 <tr class="${index === 0 ? 'team-rank-1' : ''}">
                   <td>${index + 1}</td>
                   <td>${escapeHtml(row.squadra)}</td>
-                  <td>${row.G}</td>
-                  <td>${row.V}</td>
-                  <td>${row.N}</td>
-                  <td>${row.P}</td>
-                  <td>${row.F}</td>
-                  <td>${row.S}</td>
-                  <td>${row.Diff}</td>
-                  <td class="score">${row.Pti}</td>
+
+                  ${columns.map(column => `
+                    <td class="${column.key === 'Pti' ? 'score' : ''}">
+                      ${escapeHtml(row[column.key] ?? 0)}
+                    </td>
+                  `).join('')}
                 </tr>
               `).join('')}
             </tbody>
@@ -834,6 +822,33 @@ function renderStandingsCard(rows, tournament) {
       `).join('')}
     </section>
   `;
+}
+
+function getStandingsColumns(tournament) {
+  const sport = String(tournament?.sport || '').toLowerCase();
+
+  if (sport.includes('calcio')) {
+    return [
+      { key: 'G', label: 'G' },
+      { key: 'V', label: 'V' },
+      { key: 'N', label: 'N' },
+      { key: 'P', label: 'P' },
+      { key: 'F', label: 'GF' },
+      { key: 'S', label: 'GS' },
+      { key: 'Diff', label: 'DR' },
+      { key: 'Pti', label: 'Pti.' }
+    ];
+  }
+
+  return [
+    { key: 'G', label: 'G' },
+    { key: 'V', label: 'V' },
+    { key: 'P', label: 'P' },
+    { key: 'F', label: 'Pt+' },
+    { key: 'S', label: 'Pt-' },
+    { key: 'Diff', label: 'Diff' },
+    { key: 'Pti', label: 'Pti.' }
+  ];
 }
 
 function renderScheduleCard(rows, title = 'Calendario e risultati', tournament = null) {
