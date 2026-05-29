@@ -852,10 +852,6 @@ function renderScheduleCard(rows, title = 'Calendario e risultati') {
     <section class="card">
       <div class="card-header">
         <h2>${escapeHtml(title)}</h2>
-        <p>${title.toLowerCase().includes('gironi')
-          ? 'Le partite terminate aggiornano automaticamente la classifica.'
-          : 'Aggiorna risultati e stato dal foglio dedicato.'}
-        </p>
       </div>
 
       ${Object.entries(groups).map(([date, items]) => `
@@ -948,9 +944,20 @@ function groupBy(arr, fn) {
 */
 function formatDate(value) {
   if (!value) return 'Data da definire';
-  if (!/^\d{2}-\d{2}-\d{4}$/.test(value)) return escapeHtml(value);
 
-  return new Date(`${value}T12:00:00`).toLocaleDateString('it-IT', {
+  if (!/^\d{2}-\d{2}-\d{4}$/.test(value)) {
+    return escapeHtml(value);
+  }
+
+  const [day, month, year] = value.split('-');
+
+  const date = new Date(
+    Number(year),
+    Number(month) - 1,
+    Number(day)
+  );
+
+  return date.toLocaleDateString('it-IT', {
     weekday: 'long',
     day: '2-digit',
     month: 'long'
