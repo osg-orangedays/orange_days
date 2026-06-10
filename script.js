@@ -983,7 +983,7 @@ function renderScheduleCard(rows, title = 'Calendario e risultati', tournament =
   }
 
   const sport = String(tournament?.sport || '').toLowerCase();
-  const showReferee = !sport.includes('calcio');
+  const showReferee = sport.includes('volley');
 
   const sorted = [...rows].sort(compareMatches);
   const groups = groupBy(sorted, row => row.data || 'Data da definire');
