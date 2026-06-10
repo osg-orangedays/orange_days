@@ -722,7 +722,7 @@ function renderScorersCard(scorers) {
   if (!scorers || !scorers.length) return '';
 
   const sorted = calculateScorers(scorers);
-  const medals = ['🥇', '🥈', '🥉'];
+  const medals = ['🥇'];
 
   // Raggruppa per posizione: chi ha gli stessi gol condivide il podio
   let rank = 0;
