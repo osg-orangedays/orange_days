@@ -186,8 +186,6 @@ async function loadTournament(tournament) {
   };
 }
 
-  };
-}
 
 /*
   Carica il CSV dei marcatori e lo converte in oggetti.
@@ -219,7 +217,7 @@ function calculateScorers(rows) {
     b.gol - a.gol ||
     String(a.giocatore).localeCompare(String(b.giocatore), 'it-IT')
   );
-
+}
 
 /*
   Controlla se almeno una fase ha un CSV configurato.
