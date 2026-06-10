@@ -101,7 +101,7 @@ window.ORANGE_DAYS_CONFIG = {
           id: 'Volley-Finali',
           name: 'Finali',
           type: 'finals',
-          csv: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRsPNDmKgGp38qQEdYTPGy6uju4nNJLYGMepeTtd-Qrz7TeY8p23gJz1-I4wB8Aow/pub?gid=1529154982&single=true&output=csv'
+          csv: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRsPNDmKgGp38qQEdYTPGy6uju4nNJLYGMepeTtd-Qrz7TeY8p23gJz1-I4wB8Aow/pub?gid=1840481391&single=true&output=csv'
         }
       ]
     }
