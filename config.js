@@ -46,7 +46,8 @@ window.ORANGE_DAYS_CONFIG = {
           type: 'finals',
           csv: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRsPNDmKgGp38qQEdYTPGy6uju4nNJLYGMepeTtd-Qrz7TeY8p23gJz1-I4wB8Aow/pub?gid=1897489443&single=true&output=csv'
         }
-      ]
+      ],
+      scorersCsv: "https://docs.google.com/spreadsheets/d/e/2PACX-1vRsPNDmKgGp38qQEdYTPGy6uju4nNJLYGMepeTtd-Qrz7TeY8p23gJz1-I4wB8Aow/pub?gid=31356137&single=true&output=csv"
     },
     {
       id: 'basket-3x3',
@@ -89,6 +90,12 @@ window.ORANGE_DAYS_CONFIG = {
           name: 'Gironi',
           type: 'groups',
           csv: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRsPNDmKgGp38qQEdYTPGy6uju4nNJLYGMepeTtd-Qrz7TeY8p23gJz1-I4wB8Aow/pub?gid=761051022&single=true&output=csv'
+        },
+        {
+          id: 'Volley-GoldSilver',
+          name: 'Silver/Gold',
+          type: 'groups',
+          csv: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRsPNDmKgGp38qQEdYTPGy6uju4nNJLYGMepeTtd-Qrz7TeY8p23gJz1-I4wB8Aow/pub?gid=1529154982&single=true&output=csv'
         },
         {
           id: 'Volley-Finali',

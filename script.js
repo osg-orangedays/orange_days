@@ -181,9 +181,45 @@ async function loadTournament(tournament) {
 
   return {
     ...tournament,
-    phases
+    phases,
+    scorers: await loadScorers(tournament.scorersCsv || null)
   };
 }
+
+  };
+}
+
+/*
+  Carica il CSV dei marcatori e lo converte in oggetti.
+
+  Colonne attese (case-insensitive, con alias comuni):
+    giocatore | nome
+    squadra   | team
+    goal | reti
+*/
+async function loadScorers(url) {
+  if (!url) return [];
+
+  const rows = await loadCsv(url);
+
+  return rows
+    .map(row => ({
+      giocatore: firstNonEmpty(row.giocatore, row.nome, row.player, row.name),
+      squadra:   firstNonEmpty(row.squadra, row.team, row.club),
+      gol:       Number(firstNonEmpty(row.goal, row.reti, row.goals) || 0)
+    }))
+    .filter(row => row.giocatore !== '');
+}
+
+/*
+  Ordina i marcatori per gol (decrescente), poi alfabeticamente.
+*/
+function calculateScorers(rows) {
+  return [...rows].sort((a, b) =>
+    b.gol - a.gol ||
+    String(a.giocatore).localeCompare(String(b.giocatore), 'it-IT')
+  );
+
 
 /*
   Controlla se almeno una fase ha un CSV configurato.
@@ -633,22 +669,37 @@ function renderTournamentTabs() {
   Disegna i tab secondari:
   - Gironi
   - Finali
+  - Marcatori (solo se scorersCsv è configurato)
+
+  Usa '__scorers__' come id virtuale per il tab marcatori.
 */
 function renderPhaseTabs(tournament) {
   const phases = tournament.phases || [];
+  const hasScorers = (tournament.scorers || []).length > 0 || tournament.scorersCsv;
 
-  if (phases.length <= 1) return '';
+  // Mostra i tab solo se ci sono almeno 2 voci totali
+  if (phases.length <= 1 && !hasScorers) return '';
+
+  const activeId = state.activePhaseId;
 
   return `
     <nav class="phase-tabs" aria-label="Fasi torneo">
       ${phases.map(phase => `
         <button
-          class="phase-tab ${phase.id === state.activePhaseId ? 'active' : ''}"
+          class="phase-tab ${phase.id === activeId ? 'active' : ''}"
           data-phase-id="${escapeHtml(phase.id)}"
         >
           ${escapeHtml(phase.name)}
         </button>
       `).join('')}
+      ${hasScorers ? `
+        <button
+          class="phase-tab ${activeId === '__scorers__' ? 'active' : ''}"
+          data-phase-id="__scorers__"
+        >
+          ⚽ Marcatori
+        </button>
+      ` : ''}
     </nav>
   `;
 }
@@ -664,6 +715,63 @@ function bindPhaseTabs() {
     });
   });
 }
+
+/*
+  Disegna la classifica marcatori.
+  Mostra solo i primi 3 con medaglie, poi la lista completa.
+*/
+function renderScorersCard(scorers) {
+  if (!scorers || !scorers.length) return '';
+
+  const sorted = calculateScorers(scorers);
+  const medals = ['🥇', '🥈', '🥉'];
+
+  // Raggruppa per posizione: chi ha gli stessi gol condivide il podio
+  let rank = 0;
+  let lastGol = null;
+
+  const ranked = sorted.map(row => {
+    if (row.gol !== lastGol) {
+      rank += 1;
+      lastGol = row.gol;
+    }
+    return { ...row, rank };
+  });
+
+  return `
+    <section class="card">
+      <div class="card-header">
+        <h2>⚽ Classifica marcatori</h2>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Giocatore</th>
+              <th>Squadra</th>
+              <th>Gol</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            ${ranked.map(row => `
+              <tr class="${row.rank === 1 ? 'team-rank-1' : ''}">
+                <td>${medals[row.rank - 1] ?? row.rank}</td>
+                <td>${escapeHtml(row.giocatore)}</td>
+                <td>${escapeHtml(row.squadra)}</td>
+                <td class="score">${row.gol}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  `;
+}
+
+
 
 /*
   Render principale della pagina.
@@ -682,6 +790,17 @@ function render() {
   }
 
   state.activeTournamentId = tournament.id;
+
+  // Tab marcatori attivo: mostra solo la classifica marcatori
+  if (state.activePhaseId === '__scorers__') {
+    content.innerHTML = `
+      ${renderPhaseTabs(tournament)}
+      ${renderScorersCard(tournament.scorers || [])}
+    `;
+    bindPhaseTabs();
+    updateLastUpdate();
+    return;
+  }
 
   const phase = getActivePhase(tournament);
 
@@ -721,14 +840,23 @@ function render() {
       ? `
         <section class="stack">
           ${renderStandingsCard(calculateStandings(rows, tournament), tournament)}
+          ${renderScorersCard(tournament.scorers || [])}
           ${renderScheduleCard(rows, 'Calendario gironi', tournament)}
         </section>
       `
-      : renderScheduleCard(rows, phase.name, tournament)
+      :renderScheduleCard(rows, phase.name, tournament)
     }
   `;
 
   bindPhaseTabs();
+  updateLastUpdate();
+}
+
+/*
+  Aggiorna il timestamp "Aggiornato: HH:MM" nell'header.
+*/
+function updateLastUpdate() {
+
 
   const lastUpdate = document.getElementById('lastUpdate');
 
