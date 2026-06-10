@@ -838,7 +838,6 @@ function render() {
       ? `
         <section class="stack">
           ${renderStandingsCard(calculateStandings(rows, tournament), tournament)}
-          ${renderScorersCard(tournament.scorers || [])}
           ${renderScheduleCard(rows, 'Calendario gironi', tournament)}
         </section>
       `
